@@ -13,13 +13,6 @@
   querySelector. The imported dom is avaible but the context/perspective/scope isn't the same.
   Therefore the HTML must be bundled with the Javascript!
 -->
-<template id="contact-entry">
-  <style>
-    h4, p {margin: 0;}
-  </style>
-  <h4>John Smith</h4>
-  <p>+60 88 88 88 88</p>
-</template>
 
 <script>
 
@@ -32,6 +25,21 @@
      this.template = document.querySelector('#'+ this.constructor.name.domSafe());
      this.shadow = this.attachShadow({mode: 'open'});
      this.shadow.appendChild(document.importNode(this.template.content, true));
+
+     /*
+      * The child component's template must be available in the current dom to find the template with
+      * querySelector. The imported dom is avaible but the context/perspective/scope isn't the same.
+      * Therefore the HTML must be bundled with the Javascript!
+      */
+
+      //import dom is accesible to extract template content
+      //ref: https://www.html5rocks.com/en/tutorials/webcomponents/imports/
+
+     //will have issues with miltiple imports
+     var link = document.querySelector('link[rel="import"]');
+     var template = link.import.querySelector('#contact-entry');
+     document.body.appendChild(template);
+
    }
 
    connectedCallback(){
@@ -45,6 +53,7 @@
    adoptedCallback(){}
 
    MakeEntries(count){
+
      var contactContainer = this.shadow.querySelector("#container");
      'a'.repeat(count).split('a').forEach( ()=>{
        contactContainer.appendChild(document.createElement("contact-entry"));
