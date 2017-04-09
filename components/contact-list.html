@@ -1,0 +1,67 @@
+ <link rel="import" href="contact-entry.html">
+
+<contact-list data-contacts="10"></contact-list>
+
+
+<template id="contact-list">
+  <h2>Contacts</h2>
+  <div id="container"></div>
+</template>
+
+<!--
+  The child component's template must be available in the current dom to find the template with
+  querySelector. The imported dom is avaible but the context/perspective/scope isn't the same.
+  Therefore the HTML must be bundled with the Javascript!
+-->
+<template id="contact-entry">
+  <style>
+    h4, p {margin: 0;}
+  </style>
+  <h4>John Smith</h4>
+  <p>+60 88 88 88 88</p>
+</template>
+
+<script>
+
+
+
+ class ContactList extends HTMLElement {
+
+   constructor(...data) {
+     super();
+     this.template = document.querySelector('#'+ this.constructor.name.domSafe());
+     this.shadow = this.attachShadow({mode: 'open'});
+     this.shadow.appendChild(document.importNode(this.template.content, true));
+   }
+
+   connectedCallback(){
+     this.dataset.contacts & this.MakeEntries(parseInt(this.dataset.contacts));
+   }
+
+   attributeChangedCallback(){}
+
+   disconnectedCallback(){}
+
+   adoptedCallback(){}
+
+   MakeEntries(count){
+     var contactContainer = this.shadow.querySelector("#container");
+     'a'.repeat(count).split('a').forEach( ()=>{
+       contactContainer.appendChild(document.createElement("contact-entry"));
+     })
+   }
+
+ }
+
+ //Components may require other building block and refuse to define themselves
+ //note: customElements contains a methods "whenDefined" which returns a promise.
+ //ref: 2.4 The CustomElementRegistry interface
+ if(!customElements.get("contact-entry")){
+   console.error("Custom Element contact-entry is required!");
+ }else {
+    customElements.define('contact-list', ContactList);
+    if(customElements.get('contact-list')){
+      console.log("Custom Element contact-list Created!");
+    }
+ }
+ </script>
