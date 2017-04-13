@@ -1,0 +1,43 @@
+<!-- using 3rd lib responsivevoicejs -->
+<script src="https://code.responsivevoice.org/responsivevoice.js"></script>
+
+<template id="text-speech">
+    <textarea></textarea>
+    <input type="button" value="🔊 Play" />
+</template>
+
+<script>
+    class TextSpeech extends HTMLElement {
+
+        constructor(...data) {
+            super();
+
+            var link = document.querySelector('link[rel="import"][href*="text-speech"]');
+            this.template = link.import.querySelector('#' + this.constructor.name.domSafe());
+            this.shadow = this.attachShadow({ mode: 'open' });
+            this.shadow.appendChild(document.importNode(this.template.content, true));
+        }
+
+        play() {
+            responsiveVoice.speak(this.shadow.querySelector("textarea").value);
+        }
+
+        connectedCallback() {
+            this.shadow.querySelector("input").onclick = () => this.play();
+        }
+
+        attributeChangedCallback() { }
+
+        disconnectedCallback() { }
+
+        adoptedCallback() { }
+
+    }
+
+    customElements.define('text-speech', TextSpeech);
+
+    if (customElements.get("text-speech")) {
+        console.log("Custom Element text-speech Created!");
+    }
+
+</script>

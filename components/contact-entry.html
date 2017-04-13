@@ -1,84 +1,89 @@
 <!-- The Custom Element/Component -->
-<!-- Import is causing issues for contact-list obviously -->
-<!-- should create a index and include import all components -->
 <!-- <contact-entry class="contact-entry" data-sample="val"></contact-entry>-->
 
 <template id="contact-entry">
   <!-- selectors ::shadow and /deep/ didn't work from the surface/light dom-->
   <style>
-    h4, p {margin: 0;}
+    h4,
+    p {
+      margin: 0;
+    }
   </style>
 
-  <h4>John Smith</h4>
-  <p>+60 88 88 88 88</p>
+  <h4>name</h4>
+  <p>number</p>
 </template>
 
 <script>
-
-//Helper function for domsafe component name
-String.prototype.domSafe = function(){
-  return this.replace(/([a-zA-Z])(?=[A-Z])/g, '$1-').toLowerCase();
-}
-
-//Inpect Object internals
-console.inspect = (obj, name = "Object" ) => {
-  console.groupCollapsed(name + " Properties");
-  for(var key in this){
-    console.log(key, this[key]);
+  //Helper function for domsafe component name
+  String.prototype.domSafe = function () {
+    return this.replace(/([a-zA-Z])(?=[A-Z])/g, '$1-').toLowerCase();
   }
-  console.groupEnd();
-}
 
-/*
- * Accessing shadowdom element P from dom/console:
- * document.querySelector("contact-entry").shadowRoot.querySelector("p")
- * The following yields no result:
- * document.querySelector("contact-entry::shadow p")
- */
-
-class ContactEntry extends HTMLElement {
-
-  /*
-   * When creating an element from code, data will be passed into the constructor.
-   * When using the DOM with `data-` attribute, values with be located in the dataset property.
-   */
-
-  constructor(...data) {
-    super();
-    var link = document.querySelector('link[rel="import"][href*="contact-entry"]');
-    this.template = link.import.querySelector('#'+ this.constructor.name.domSafe());
-    this.shadow = this.attachShadow({mode: 'open'});
-    this.shadow.appendChild(document.importNode(this.template.content, true));
+  //Inpect Object internals
+  console.inspect = (obj, name = "Object") => {
+    console.groupCollapsed(name + " Properties");
+    for (var key in this) {
+      console.log(key, this[key]);
+    }
+    console.groupEnd();
   }
 
   /*
-   * Callbacks!
-   * ref: https://w3c.github.io/webcomponents/spec/custom/
-   * 2.3 Core concepts
+   * Accessing shadowdom element P from dom/console:
+   * document.querySelector("contact-entry").shadowRoot.querySelector("p")
+   * The following yields no result:
+   * document.querySelector("contact-entry::shadow p")
    */
 
-  connectedCallback(){}
+  class ContactEntry extends HTMLElement {
 
-  attributeChangedCallback(){}
+    /** Required for attributeChangedCallback to trigged based on provided attribute names */
+    static get observedAttributes() { return []; }
 
-  disconnectedCallback(){}
+    /*
+     * When creating an element from code, data will be passed into the constructor.
+     * When using the DOM with `data-` attribute, values with be located in the dataset property.
+     */
+    
+    constructor(...data) {
+      super();
+      this.data = { name: "John", number:"+60 88 88 88 88 88"};
 
-  adoptedCallback(){}
+      var link = document.querySelector('link[rel="import"][href*="contact-entry"]');
+      this.template = link.import.querySelector('#' + this.constructor.name.domSafe());
+      this.shadow = this.attachShadow({ mode: 'open' });
+      this.shadow.appendChild(document.importNode(this.template.content, true));
+    }
 
-}
+    /*
+     * Callbacks!
+     * ref: https://w3c.github.io/webcomponents/spec/custom/
+     * 2.3 Core concepts
+     */
 
-//Note:document.registerElement() is deprecated in favor of customElements.define().
-// ref: https://developer.mozilla.org/en-US/docs/Web/API/Document/registerElement
-customElements.define('contact-entry', ContactEntry);
+    connectedCallback() {}
 
-/* Idea
- * customElements lives in window.customElements!
- * That would mean that we could create an iframe and inject/extract customElements for live preview.
- * ref: 2.4 The CustomElementRegistry interface
- */
+    attributeChangedCallback(name, oldVal, newVal) {}
 
-if(customElements.get("contact-entry")){
-  console.log("Custom Element contact-entry Created!");
-}
+    disconnectedCallback() {}
+
+    adoptedCallback() {}
+
+  }
+
+  //Note:document.registerElement() is deprecated in favor of customElements.define().
+  // ref: https://developer.mozilla.org/en-US/docs/Web/API/Document/registerElement
+  customElements.define('contact-entry', ContactEntry);
+
+  /* Idea
+   * customElements lives in window.customElements!
+   * That would mean that we could create an iframe and inject/extract customElements for live preview.
+   * ref: 2.4 The CustomElementRegistry interface
+   */
+
+  if (customElements.get("contact-entry")) {
+    console.log("Custom Element contact-entry Created!");
+  }
 
 </script>
