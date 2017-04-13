@@ -22,7 +22,9 @@
 
    constructor(...data) {
      super();
-     this.template = document.querySelector('#'+ this.constructor.name.domSafe());
+
+     var link = document.querySelector('link[rel="import"][href*="contact-list"]');
+     this.template = link.import.querySelector('#'+ this.constructor.name.domSafe());
      this.shadow = this.attachShadow({mode: 'open'});
      this.shadow.appendChild(document.importNode(this.template.content, true));
 
@@ -34,11 +36,6 @@
 
       //import dom is accesible to extract template content
       //ref: https://www.html5rocks.com/en/tutorials/webcomponents/imports/
-
-     //will have issues with miltiple imports
-     var link = document.querySelector('link[rel="import"]');
-     var template = link.import.querySelector('#contact-entry');
-     document.body.appendChild(template);
 
    }
 

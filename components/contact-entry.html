@@ -45,7 +45,8 @@ class ContactEntry extends HTMLElement {
 
   constructor(...data) {
     super();
-    this.template = document.querySelector('#'+ this.constructor.name.domSafe());
+    var link = document.querySelector('link[rel="import"][href*="contact-entry"]');
+    this.template = link.import.querySelector('#'+ this.constructor.name.domSafe());
     this.shadow = this.attachShadow({mode: 'open'});
     this.shadow.appendChild(document.importNode(this.template.content, true));
   }
